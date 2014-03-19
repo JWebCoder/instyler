@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <script type="text/javascript" src="instyler.js"></script>
+    </head>
+    <body>
+        <select id="teste">
+            <option selected>
+                Teste 1
+            </option>
+            <option>
+                Teste 2
+            </option>
+            <option>
+                Teste 3
+            </option>
+            <option>
+                Teste 4
+            </option>
+            <option>
+                Teste 5
+            </option>
+        </select><br>
+        <input type="checkbox" name="checkentry" id="check1" class="checkbox" value="teste"> <label for="check1">teste</label><br>
+        <input type="checkbox" name="checkentry" id="check2" class="checkbox" value="cenas"> <label for="check2">cenas</label><br>
+        
+        <input type="radio" name="radioentry" id="radio1" class="radiobutton" value="cenas"> <label for="radio1">teste</label><br>
+        <input type="radio" name="radioentry" id="radio2" class="radiobutton" value="cenas"> <label for="radio2">cenas</label>
+        <script type="text/javascript">
+            (function () {
+                instyler.genSelect(document.getElementById("teste"));
+                checkboxes = document.getElementsByClassName("checkbox");
+                for (var i = 0; i < checkboxes.length; i++) {
+                    instyler.genCheckbox(checkboxes[i],"img/checkbox_checked.png","img/checkbox_unchecked.png");
+                }
+                radiobuttons = document.getElementsByClassName("radiobutton");
+                for (var i = 0; i < radiobuttons.length; i++) {
+                    instyler.genRadio(radiobuttons[i],"img/checkbox_checked.png","img/checkbox_unchecked.png");
+                }
+            }());
+        </script>
+    </body>
+</html>
