@@ -1,134 +1,187 @@
 /*jslint browser:true */
 /*jslint node: true */
+/*global j */
 'use strict';
 var instyler = {
     genSelect: function (element) {
-        var parent, wrapper, span;
+        var i,
+            parent,
+            width,
+            wrapper,
+            span,
+            list,
+            options,
+            templi,
+            setSelected,
+            toogle;
         
         function setText() {
             span.textContent = element.options[element.selectedIndex].text;
         }
         
-        element.style.opacity = "0";
-        element.style.position = "relative";
-        element.style.zIndex = "2";
-        element.onchange = setText;
+        toogle = function () {
+            if (j.hasClass("is-hidden", list)) {
+                j.removeClass("is-hidden", list);
+            } else {
+                j.addClass("is-hidden", list);
+            }
+        };
         
+        setSelected = function () {
+            var i, options, len, value;
+            value = this.getAttribute("data-val");
+            options = element.options;
+            len = options.length;
+            for (i = 0; i < len; i += 1) {
+                if (options[i].value !== value) {
+                    options[i].removeAttribute("selected");
+                } else {
+                    options[i].setAttribute("selected", "");
+                }
+            }
+            setText();
+        };
+        
+        width = window.getComputedStyle(element).width;
+        element.style.display = "none";
+                
         wrapper = document.createElement("div");
-        wrapper.style.display = "inline";
-        wrapper.style.position = "relative";
+        wrapper.className = "masterBorderColor instyler dropdown";
+        wrapper.style.width = width;
+        
+        list = document.createElement("ul");
+        list.className = "masterBorderColor dropdown__list is-hidden";
+        options = element.getElementsByTagName("option");
+        for (i = 0; i < options.length; i += 1) {
+            templi = document.createElement("li");
+            templi.textContent = options[i].text;
+            templi.setAttribute("data-val", options[i].value);
+            j.addEvent(templi, "click", setSelected);
+            list.appendChild(templi);
+        }
+        
         
         span = document.createElement("span");
-        span.style.position = "absolute";
-        span.style.top = "0";
-        span.style.left = "0";
-        span.style.right = "0";
-        span.style.bottom = "0";
-        span.style.zIndex = "1";
         setText();
         
         parent = element.parentNode;
         parent.replaceChild(wrapper, element);
+        
+        j.addEvent(wrapper, "click", toogle);
         wrapper.appendChild(element);
         wrapper.appendChild(span);
+        wrapper.appendChild(list);
+        
+        list.style.top = window.getComputedStyle(wrapper).height - 1;
     },
     
     genCheckbox: function (element, imageOn, imageOff) {
-        var parent, wrapper, label = "", image;
-        if (element.nextElementSibling.nodeName === "LABEL") {
-            label = element.nextElementSibling;
-        }
+        var parent,
+            wrapper,
+            label = "",
+            square,
+            checked,
+            changeSelection,
+            setImage;
         
-        function setImage() {
+        setImage = function () {
             if (element.checked === true) {
-                image.src = image.getAttribute("data-off");
+                j.removeClass("is-hidden", checked);
             } else {
-                image.src = image.getAttribute("data-on");
+                j.addClass("is-hidden", checked);
             }
-        }
+        };
         
-        element.style.opacity = "0";
-        element.style.position = "relative";
-        element.style.zIndex = "2";
+        changeSelection = function () {
+            if (element.checked === true) {
+                this.parentNode.getElementsByTagName("span")[0].style.display = "inline";
+            } else {
+                this.parentNode.getElementsByTagName("span")[0].style.display = "none";
+            }
+        };
         
-        image = document.createElement("img");
-        image.style.position = "absolute";
-        image.style.top = "2px";
-        image.style.left = "0";
-        image.style.zIndex = "1";
-        image.setAttribute("data-off", imageOff);
-        image.setAttribute("data-on", imageOn);
-        image.style.width = "16px";
-        image.style.height = "16px";
-        if (element.checked === false) {
-            image.src = image.getAttribute("data-off");
-        } else {
-            image.src = image.getAttribute("data-on");
-        }
-        
+        square = document.createElement("div");
+        checked = document.createElement("span");
         wrapper = document.createElement("div");
-        wrapper.style.display = "inline";
-        wrapper.style.position = "relative";
+        
+        j.addClass("checkbox", element);
+        j.addClass("layer", square);
+        j.addClass("checked-layer icon-checkmark masterTextColor", checked);
+        j.addClass("instyler checklist", wrapper);
+        if (element.checked === false) {
+            j.addClass("is-hidden", checked);
+        } else {
+            j.removeClass("is-hidden", checked);
+        }
         
         parent = element.parentNode;
-        parent.replaceChild(wrapper, element);
-        wrapper.appendChild(image);
-        wrapper.appendChild(element);
-        label.onclick = setImage;
-        if (label !== "") {
+        if (element.nextElementSibling.nodeName === "LABEL") {
+            label = element.nextElementSibling;
+            j.addClass("label", label);
             parent.removeChild(label);
+        }
+        square.appendChild(checked);
+        wrapper.appendChild(square);
+        parent.replaceChild(wrapper, element);
+        j.addEvent(element, "click", changeSelection);
+        wrapper.appendChild(element);
+        j.addEvent(label, "click", setImage);
+        if (label !== "") {
             wrapper.appendChild(document.createTextNode(" "));
             wrapper.appendChild(label);
         }
     },
     
     genRadio: function (element, imageOn, imageOff) {
-        var parent, wrapper, label = "", image;
-        if (element.nextElementSibling.nodeName === "LABEL") {
-            label = element.nextElementSibling;
-        }
+        var parent,
+            wrapper,
+            label = "",
+            circle,
+            smallcircle,
+            setImage;
         
-        function setImage() {
-            var i, elements = document.querySelectorAll("input[type=radio]"), len = elements.length;
+        setImage = function () {
+            var i, elements = j.selectByClass("radio-button"), len = elements.length;
             for (i = 0; i < len; i += 1) {
                 if (elements[i].checked === false) {
-                    elements[i].parentNode.getElementsByTagName("img")[0].src = elements[i].parentNode.getElementsByTagName("img")[0].getAttribute("data-off");
+                    j.addClass("is-hidden", j.selectByTag("div", elements[i].parentNode)[0].firstElementChild);
                 } else {
-                    elements[i].parentNode.getElementsByTagName("img")[0].src = elements[i].parentNode.getElementsByTagName("img")[0].getAttribute("data-on");
+                    j.removeClass("is-hidden", j.selectByTag("div", elements[i].parentNode)[0].firstElementChild);
                 }
             }
-        }
+        };
         
-        element.style.opacity = "0";
-        element.style.position = "relative";
-        element.style.zIndex = "2";
-        
-        image = document.createElement("img");
-        image.style.position = "absolute";
-        image.style.top = "2px";
-        image.style.left = "0";
-        image.style.zIndex = "1";
-        image.setAttribute("data-off", imageOff);
-        image.setAttribute("data-on", imageOn);
-        image.style.width = "16px";
-        image.style.height = "16px";
-        if (element.checked === false) {
-            image.src = image.getAttribute("data-off");
-        } else {
-            image.src = image.getAttribute("data-on");
-        }
-        
+        circle = document.createElement("div");
+        smallcircle = document.createElement("div");
         wrapper = document.createElement("div");
-        wrapper.style.display = "inline";
-        wrapper.style.position = "relative";
+        
+        j.addClass("radio-button", element);
+        j.addClass("layer", circle);
+        j.addClass("checked-layer masterBackgroundColor is-hidden", smallcircle);
+        j.addClass("instyler radiolist", wrapper);
+
+        if (element.checked === false) {
+            j.addClass("is-hidden", smallcircle);
+        } else {
+            j.removeClass("is-hidden", smallcircle);
+        }
         
         parent = element.parentNode;
-        parent.replaceChild(wrapper, element);
-        wrapper.appendChild(image);
-        wrapper.appendChild(element);
-        element.onchange = setImage;
-        if (label !== "") {
+        if (element.nextElementSibling.nodeName === "LABEL") {
+            label = element.nextElementSibling;
+            j.addClass("label", label);
             parent.removeChild(label);
+        }
+
+        j.addEvent(element, "click", setImage);
+        
+        circle.appendChild(smallcircle);
+        wrapper.appendChild(circle);
+        parent.replaceChild(wrapper, element);
+        wrapper.appendChild(element);
+        
+        j.addEvent(label, "click", setImage);
+        if (label !== "") {
             wrapper.appendChild(document.createTextNode(" "));
             wrapper.appendChild(label);
         }
