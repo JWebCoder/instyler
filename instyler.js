@@ -125,8 +125,9 @@ var instyler = {
         parent.replaceChild(wrapper, element);
         j.addEvent(element, "click", changeSelection);
         wrapper.appendChild(element);
-        j.addEvent(label, "click", setImage);
+
         if (label !== "") {
+            j.addEvent(label, "click", setImage);
             wrapper.appendChild(document.createTextNode(" "));
             wrapper.appendChild(label);
         }
@@ -180,8 +181,8 @@ var instyler = {
         parent.replaceChild(wrapper, element);
         wrapper.appendChild(element);
         
-        j.addEvent(label, "click", setImage);
         if (label !== "") {
+            j.addEvent(label, "click", setImage);
             wrapper.appendChild(document.createTextNode(" "));
             wrapper.appendChild(label);
         }
